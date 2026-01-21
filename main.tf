@@ -16,6 +16,7 @@ provider "aws" {
   web_sg = [module.Web_SG01.web_sg_id]
   num_of_vm = 1
   env = "dev"
+  user_data = file("scripts/nginx.sh")
 }
 module "Web_SG01" {
   source = "git::https://github.com/harimerits/hariuser20day3//security-group?ref=main"

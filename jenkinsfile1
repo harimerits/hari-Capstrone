@@ -45,5 +45,14 @@ input message: 'Approve Terraform Apply?'
         sh 'terraform apply -auto-approve tfplan'
       }
     }
-  }
+    stage('Cleanup.Workspace'){
+      steps {
+        deleteDir ()
+      }
+    }
+
+  
+
+  } 
+   
 }
