@@ -2,48 +2,27 @@ provider "aws" {
     #count = 2
  region =  "ap-south-1"
  
-default_tags {
-    tags = {
-      owner = "user20"
-    }
-      }
+
 }   
 
   
- locals {
-  tag_Name = "Hari-${var.env}"
+ module "Vms_app1" {
+  #source = "./module/ec2-instance"
+  source = "git::https://github.com/harimerits/hariuser20day3//ec2-instance?ref=main"
+  region-1 = "ap-south-1"
+  instance_type = "t3.micro"
+  subnets = ["subnet-0a413d769fe98ba0b", "subnet-043f1f8151b681cca", "subnet-04f47a3252bdf06e6"]
+  #Security_group = module.Security_group.op_sg_id
+  web_sg = [module.Web_SG01.web_sg_id]
+  num_of_vm = 1
+  env = "dev"
 }
-  
- 
-
-resource "aws_instance" "main" {
-    ami = "ami-0ced6a024bb18ff2e"
-    instance_type = "t2.micro"
-    count = 1
-    #subnet_id =
-tags = {
-    Name = "Hari"
-    Name =  local.tag_Name
-    owner = "User20"
-        #Name = "hari${count.index + 1}"
-    
-  }
-  
-}
-
-
-data "aws_subnet" "subnet1"{
-
-  filter {
-    name = "tag:Name"
-    values = ["Sub02"]
-  }
-}
-
-output "vm_pip" {
-  value = aws_instance.main[0].public_ip
+module "Web_SG01" {
+  source = "git::https://github.com/harimerits/hariuser20day3//security-group?ref=main"
+  project = "vishwa"
+  vpc_id = data.aws_vpc.default.id
 }
  
-output "vm_pips" {
-  value = [for vm in aws_instance.main : vm.public_ip ]
+data "aws_vpc" "default" {
+  default = true
 }
